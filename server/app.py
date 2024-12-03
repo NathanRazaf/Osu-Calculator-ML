@@ -21,13 +21,14 @@ def get_top_50():
 
     def generate():
         usernames = get_top_50_country_usernames(country)
-        for index, username in enumerate(usernames):
-            yield f"data: Starting processing for {username} ({index + 1}/{len(usernames)})\n\n"
-            print(f"Processing {username} ({index + 1}/{len(usernames)})")
+        for username in usernames:
+            yield f"data: Starting processing for {username}\n\n"
+            print(f"Calling API for {username}")
             try:
-                response = requests.get(f"{called_api}/{username}/100", stream=True, timeout=600)
+                response = requests.get(f"{called_api}/{username}/100", stream=True, timeout=500)
                 response.raise_for_status()
-
+                
+                # Process the streaming response
                 for line in response.iter_lines(decode_unicode=True):
                     if line:
                         try:
@@ -35,21 +36,14 @@ def get_top_50():
                             parsed_data = json.loads(data)
                             yield f"data: {json.dumps(parsed_data)}\n\n"
                         except json.JSONDecodeError:
-                            print(f"Failed to parse line for {username}: {line}")
-                            yield f"data: {json.dumps({'username': username, 'error': 'Failed to parse line'})}\n\n"
+                            print(f"Failed to parse line: {line}")
+                            yield f"data: {json.dumps({'error': 'Failed to parse line'})}\n\n"
             except requests.exceptions.RequestException as e:
-                print(f"Request failed for {username}: {e}")
+                print(f"Error calling API for {username}: {e}")
                 yield f"data: {json.dumps({'username': username, 'error': str(e)})}\n\n"
-            except Exception as e:
-                print(f"Unexpected error for {username}: {e}")
-                yield f"data: {json.dumps({'username': username, 'error': 'Unexpected error occurred'})}\n\n"
+            yield f"data: Finished processing for {username}\n\n"
 
-            yield f"data: Finished processing for {username} ({index + 1}/{len(usernames)})\n\n"
-            print(f"Finished processing {username} ({index + 1}/{len(usernames)})")
-    
-    yield "data: All usernames processed\n\n"
-    print("Finished processing all usernames.")
-
+        yield "data: All usernames processed\n\n"
 
     return Response(generate(), content_type="text/event-stream")
 
