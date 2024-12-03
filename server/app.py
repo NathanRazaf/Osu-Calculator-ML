@@ -28,6 +28,7 @@ def get_top_50():
     return jsonify(results)
 
 def call_api(username):
+    print(f"Calling API for {username}")
     response = requests.get(f'{called_api}/{username}/100')
     # Process the streaming response
     results = []
