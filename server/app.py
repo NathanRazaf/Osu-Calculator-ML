@@ -25,7 +25,7 @@ def get_top_50():
             yield f"data: Starting processing for {username} ({index + 1}/{len(usernames)})\n\n"
             print(f"Processing {username} ({index + 1}/{len(usernames)})")
             try:
-                response = requests.get(f"{called_api}/{username}/100", stream=True, timeout=60)
+                response = requests.get(f"{called_api}/{username}/100", stream=True, timeout=600)
                 response.raise_for_status()
 
                 for line in response.iter_lines(decode_unicode=True):
