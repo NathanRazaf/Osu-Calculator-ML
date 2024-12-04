@@ -43,6 +43,20 @@ def get_top_50_country_usernames(country):
     return [user["user"]["username"] for user in users]
 
 
+def get_beatmapset_ids(id):
+    id = str(id) + "#osu"
+    token = get_token()
+    response = requests.get(
+        f'https://osu.ppy.sh/api/v2/beatmapsets/{id}',
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    response.raise_for_status()
+    r = response.json()["beatmaps"]
+    # Only get the id of the beatmap
+    return [beatmap["id"] for beatmap in r]
+
+
+
 
 
 
