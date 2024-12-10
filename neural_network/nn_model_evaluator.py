@@ -1,12 +1,13 @@
+import sys
+sys.path.append(f'{sys.path[0]}/..')
 import tensorflow as tf
-import xgboost as xgb
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
 import joblib
 from data_processor import get_user_scores
 
-# Evaluate Neural Network Model
+
 def evaluate_neural_network(username, architecture_name):
     """
     Evaluate a neural network model for a specific architecture.
@@ -22,7 +23,7 @@ def evaluate_neural_network(username, architecture_name):
     y_actual = new_data["actualPP"]
 
     # Load the architecture-specific scaler
-    scaler_path = f"{architecture_name}_scaler.pkl"
+    scaler_path = f"neural_network/{architecture_name}_scaler.pkl"
     print(f"Loading scaler from: {scaler_path}")
     loaded_scaler = joblib.load(scaler_path)
     
@@ -30,7 +31,7 @@ def evaluate_neural_network(username, architecture_name):
     X_new_scaled = loaded_scaler.transform(X_new)
 
     # Load the architecture-specific neural network model
-    model_path = f"{architecture_name}_model.keras"
+    model_path = f"neural_network/{architecture_name}_model.keras"
     print(f"Loading model from: {model_path}")
     trained_model = tf.keras.models.load_model(model_path)
 
@@ -39,38 +40,6 @@ def evaluate_neural_network(username, architecture_name):
 
     return y_actual, y_pred
 
-# Evaluate XGBoost Model (unchanged)
-def evaluate_xgboost(username):
-    """
-    Evaluate an XGBoost model.
-    
-    Parameters:
-        username (str): Username to fetch scores for.
-    """
-    new_data = get_user_scores(username)
-
-    # Prepare new data
-    X_new = new_data.drop("actualPP", axis=1)
-    y_actual = new_data["actualPP"]
-
-    # Load the trained XGBoost model
-    model_path = "xgb_model_optimized.pkl.z"
-    print(f"Loading model from: {model_path}")
-    trained_model = joblib.load(model_path)
-    print("Model loaded successfully.")
-
-    # Prepare data for XGBoost
-    dtest = xgb.DMatrix(X_new)
-
-    # Make predictions
-    y_pred = trained_model.predict(dtest)
-
-    return y_actual, y_pred
-
-def evaluate_results(y_actual, y_pred):
-    mse = ((y_actual - y_pred) ** 2).mean()
-    mae = (y_actual - y_pred).abs().mean()
-    return mse, mae
 
 def plot_and_evaluate_results(y_actual, y_pred, username, model_name):
     """
@@ -95,6 +64,13 @@ def plot_and_evaluate_results(y_actual, y_pred, username, model_name):
     plt.legend()
     plt.grid()
     plt.show()
+
+
+def evaluate_results(y_actual, y_pred):
+    mse = ((y_actual - y_pred) ** 2).mean()
+    mae = (y_actual - y_pred).abs().mean()
+    return mse, mae
+
 
 def evaluate_all_architectures(username, architectures=['ultra_deep']):
     """
@@ -146,12 +122,8 @@ def evaluate_all_architectures(username, architectures=['ultra_deep']):
 
     return best_architecture, best_mse, best_mae, all_results
 
-# Neural network usage:
-# best_arch, mse, mae, results = evaluate_all_architectures("NathanRazaf")
 
-# XGBoost example usage:
-y_actual, y_pred = evaluate_xgboost("NathanRazaf")
-mse, mae = evaluate_results(y_actual, y_pred)
-print(f"MSE: {mse:.4f}")
-print(f"MAE: {mae:.4f}")
-plot_and_evaluate_results(y_actual, y_pred, "xotixx", "XGBoost")
+if __name__ == "__main__":
+    username = "peppy"
+    architectures = ['ultra_deep']
+    evaluate_all_architectures(username, architectures)

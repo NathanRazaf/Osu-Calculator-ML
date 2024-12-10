@@ -1,7 +1,8 @@
+import sys
+sys.path.append(f'{sys.path[0]}/..')
 import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
-import numpy as np
 import joblib
 from data_processor import get_data
 
@@ -9,6 +10,45 @@ Sequential = tf.keras.Sequential
 Dense = tf.keras.layers.Dense
 Adam = tf.keras.optimizers.Adam
 Input = tf.keras.Input
+
+
+architectures = {
+    # 'baseline': {
+    #     'layers': [84, 42],
+    #     'learning_rate': 0.0007,
+    #     'activation': 'relu',
+    #     'epochs': 15,
+    #     'batch_size': 16
+    # },
+    # 'deeper': {
+    #     'layers': [128, 64, 32],
+    #     'learning_rate': 0.0007,
+    #     'activation': 'relu',
+    #     'epochs': 20,
+    #     'batch_size': 32
+    # },
+    # 'wider': {
+    #     'layers': [256, 128],
+    #     'learning_rate': 0.00035,
+    #     'activation': 'elu',
+    #     'epochs': 25,
+    #     'batch_size': 64
+    # },
+    # 'very_deep': {
+    #     'layers': [256, 128, 64, 32],
+    #     'learning_rate': 0.0006,
+    #     'activation': 'relu',
+    #     'epochs': 25,
+    #     'batch_size': 32
+    # },
+    'ultra_deep': {
+        'layers': [64, 2048, 1024, 1024, 512, 256, 128, 64],
+        'learning_rate': 0.0000016,
+        'activation': 'relu',
+        'epochs': 256,
+        'batch_size': 32
+    }
+}
 
 def create_model(architecture):
     """
@@ -65,8 +105,8 @@ def train_architectures(architectures):
         )
         
         # Save model and scaler
-        model.save(f"{arch_name}_model.keras")
-        joblib.dump(scaler, f"{arch_name}_scaler.pkl")
+        model.save(f"neural_network/{arch_name}_model.keras")
+        joblib.dump(scaler, f"neural_network/{arch_name}_scaler.pkl")
         
         # Store training history
         architecture_results[arch_name] = {
@@ -81,44 +121,6 @@ def train_architectures(architectures):
     
     return architecture_results
 
-# Example architectures to test
-architectures = {
-    # 'baseline': {
-    #     'layers': [84, 42],
-    #     'learning_rate': 0.0007,
-    #     'activation': 'relu',
-    #     'epochs': 15,
-    #     'batch_size': 16
-    # },
-    # 'deeper': {
-    #     'layers': [128, 64, 32],
-    #     'learning_rate': 0.0007,
-    #     'activation': 'relu',
-    #     'epochs': 20,
-    #     'batch_size': 32
-    # },
-    # 'wider': {
-    #     'layers': [256, 128],
-    #     'learning_rate': 0.00035,
-    #     'activation': 'elu',
-    #     'epochs': 25,
-    #     'batch_size': 64
-    # },
-    # 'very_deep': {
-    #     'layers': [256, 128, 64, 32],
-    #     'learning_rate': 0.0006,
-    #     'activation': 'relu',
-    #     'epochs': 25,
-    #     'batch_size': 32
-    # },
-    'ultra_deep': {
-        'layers': [1024, 512, 256, 128, 64, 32],
-        'learning_rate': 0.00005,
-        'activation': 'relu',
-        'epochs': 64,
-        'batch_size': 32
-    }
-}
 
 # Run the training
 results = train_architectures(architectures)

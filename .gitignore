@@ -1,4 +1,2 @@
 venv/
 .env
-xgb_model_optimized.json
-xgb_model_optimized.pkl.z
