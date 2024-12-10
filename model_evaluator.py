@@ -54,10 +54,9 @@ def evaluate_xgboost(username):
     y_actual = new_data["actualPP"]
 
     # Load the trained XGBoost model
-    model_path = "xgb_model_optimized.json"
+    model_path = "xgb_model_optimized.pkl.z"
     print(f"Loading model from: {model_path}")
-    trained_model = xgb.Booster()
-    trained_model.load_model(model_path)
+    trained_model = joblib.load(model_path)
     print("Model loaded successfully.")
 
     # Prepare data for XGBoost

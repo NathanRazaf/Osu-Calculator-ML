@@ -1,6 +1,7 @@
 import xgboost as xgb
 import numpy as np
 import pandas as pd
+import joblib
 from data_processor import get_data
 
 def train_xgb_model():
@@ -44,8 +45,8 @@ def train_xgb_model():
     )
 
     # Save the model
-    model.save_model("xgb_model_optimized.json")
-    print("\nModel saved to xgb_model_optimized.json")
+    joblib.dump(model, "xgb_model_optimized.pkl.z", compress=('zlib', 3))
+    print("\nModel saved to xgb_model_optimized.pkl.z with zlib compression level 3")
 
     # Get feature importance with actual feature names
     importance = model.get_score(importance_type='gain')
