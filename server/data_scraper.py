@@ -52,10 +52,11 @@ def get_beatmapset_ids(id):
     )
     response.raise_for_status()
     r = response.json()["beatmaps"]
+    print(r[0])
     # Only get the id of the beatmap
     return [beatmap["id"] for beatmap in r]
 
-
+get_beatmapset_ids(1049899)
 
 
 

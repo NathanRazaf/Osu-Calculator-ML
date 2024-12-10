@@ -17,11 +17,16 @@ db = client["osu-pp-benchmark-data"]
 projection = {
     "actualPP": 1, 
     "accPercent": 1, 
-    "combo": 1, 
+    "combo": 1,
     "nmiss": 1, 
     "hitJudgement": 1,
     "approachRate": 1, 
     "circleSize": 1, 
+    "circleCount": 1,
+    "sliderCount": 1,
+    "spinnerCount": 1,
+    "bpm": 1,
+    "hitLength": 1,
     "drainRate": 1, 
     "rating": 1,
     "EZ": 1, 
@@ -34,7 +39,7 @@ projection = {
     "_id": 0
 }
 
-batch_size = 5000
+batch_size = 16000
 
 bool_fields = ["EZ", "HT", "HD", "DT", "NC", "HR", "FL"]
 
@@ -147,6 +152,11 @@ def convert_score_into_df_row(score):
             "hitJudgement": score["beatmap"].get("accuracy", 0),
             "approachRate": score["beatmap"].get("ar", 0),
             "circleSize": score["beatmap"].get("cs", 0),
+            "circleCount": score["beatmap"].get("count_circles", 0),
+            "sliderCount": score["beatmap"].get("count_sliders", 0),
+            "spinnerCount": score["beatmap"].get("count_spinners", 0),
+            "bpm": score["beatmap"].get("bpm", 0),
+            "hitLength": score["beatmap"].get("hit_length", 0),
             "drainRate": score["beatmap"].get("drain", 0),
             "rating": score["beatmap"].get("difficulty_rating", 0),
             "EZ": 1 if "EZ" in score.get("mods", []) else 0,
@@ -161,6 +171,4 @@ def convert_score_into_df_row(score):
         print(f"Missing field in score data: {e}")
         return {}
     
-
-
 
